@@ -2,19 +2,19 @@ import copy
 import re
 import sys
 import numpy as np
-import pkg_resources
+import importlib.resources
 import inspect
 import math
 import os
 import json
 from pymcr.constraints import *
-from PyQt5 import uic, QtGui, QtCore, QtWidgets
-from PyQt5.QtCore import QThread, QSettings, Qt
-from PyQt5.QtGui import QStandardItem
+from qtpy import uic, QtGui, QtCore, QtWidgets
+from qtpy.QtCore import QThread, QSettings, Qt
+from qtpy.QtGui import QStandardItem
 
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QRadioButton, QTableWidget, QHBoxLayout, \
+from qtpy.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QRadioButton, QTableWidget, QHBoxLayout, \
     QLabel, QButtonGroup, QComboBox, QMenu, QAction, QMessageBox, QInputDialog
-from PyQt5.QtCore import QTimer
+from qtpy.QtCore import QTimer
 import sys
 
 import issfactortools
@@ -25,7 +25,7 @@ import issfactortools.widgets.QDialog
 from issfactortools.dialogs.AddReferenceDialog import AddReferenceDialog
 
 
-ui_path = pkg_resources.resource_filename('issfactortools', 'ui/ui_main.ui')
+ui_path = str(importlib.resources.files('issfactortools') / 'ui/ui_main.ui')
 
 
 constraints_obj_dict = { 'ConstraintNonneg' : ConstraintNonneg,
@@ -53,7 +53,7 @@ def _constraint_parameter_list(constr_key):
 
 class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
 
-    progress_sig = QtCore.pyqtSignal()
+    progress_sig = QtCore.Signal()
 
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -428,7 +428,7 @@ class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
             print(self.model_datasets.item(0, 0).checkState())
             menuAction1.triggered.connect(self.inspectData)
             menuAction2.triggered.connect(self.renameData)
-            menu.exec_(self.mapToGlobal(pos))
+            menu.exec(self.mapToGlobal(pos))
 
         # references
         elif (pos.x() >= 341 and pos.x() <= 637) and (pos.y() >= 32 and pos.y() <= 440):
@@ -448,7 +448,7 @@ class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
             menuAction3.triggered.connect(self.duplicateReference)
             menuAction4.triggered.connect(self.fix_reference_curve)
             menuAction5.triggered.connect(self.unfix_reference_curve)
-            menu.exec_(self.mapToGlobal(pos))
+            menu.exec(self.mapToGlobal(pos))
 
         # constraints
         elif(pos.x() >= 683 and pos.x() <= 980) and (pos.y() >= 32 and pos.y()<=440):
@@ -463,7 +463,7 @@ class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
             menuAction1.triggered.connect(self.renameConstraint)
             menuAction2.triggered.connect(self.deleteConstraint)
             menuAction3.triggered.connect(self.duplicateConstraint)
-            menu.exec_(self.mapToGlobal(pos))
+            menu.exec(self.mapToGlobal(pos))
 
         # mcr projects
         elif (pos.x() >= 1151 and pos.x() <= 1451) and (pos.y() >= 32 and pos.y() <= 440):
@@ -474,7 +474,7 @@ class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
             menu.addAction(menuAction2)
             menuAction1.triggered.connect(self.renameMCRProject)
             menuAction2.triggered.connect(self.deleteMCRProject)
-            menu.exec_(self.mapToGlobal(pos))
+            menu.exec(self.mapToGlobal(pos))
         print("POS: ", pos.x(), pos.y())
 
     def duplicateReference(self):
@@ -646,7 +646,7 @@ class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
             refset_names = [self.model_references.item(i).text() for i in range(self.model_references.rowCount())]
             # print('BEFORE DIALOG')
             self.dialog = AddReferenceDialog(refset_names, parent=self)
-            ret = self.dialog.exec_()
+            ret = self.dialog.exec()
             # print(ret)
             if ret:
                 idx = self.dialog.get_value()
@@ -703,15 +703,15 @@ class FactorAnalysisGUI(*uic.loadUiType(ui_path)):
         referenceset = None
         constraintset = None
         for i in range(0, Datasetrows):
-            if self.model_datasets.item(i,0).checkState() == 2:
+            if self.model_datasets.item(i,0).checkState() == Qt.Checked:
                 dataset = self.model_datasets.item(i, 0).dataset
                 break
         for i in range(0, Referencerows):
-            if self.model_references.item(i,0).checkState() == 2:
+            if self.model_references.item(i,0).checkState() == Qt.Checked:
                 referenceset = self.model_references.item(i,0).reference
                 break
         for i in range(0, Constraintrows):
-            if self.model_constraints.item(i,0).checkState() == 2:
+            if self.model_constraints.item(i,0).checkState() == Qt.Checked:
                 constraintset = self.model_constraints.item(i,0).constraint
                 break
 
@@ -894,7 +894,7 @@ if __name__ == '__main__':
 
 
     QTimer.singleShot(1, xfactor)  # call startApp only after the GUI is ready
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
     sys.stdout = xlive_gui.emitstream_out
     sys.stderr = xlive_gui.emitstream_err

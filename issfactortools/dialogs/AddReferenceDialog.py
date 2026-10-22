@@ -1,7 +1,7 @@
-from PyQt5 import uic, QtGui, QtCore
-import pkg_resources
+from qtpy import uic, QtGui, QtCore
+import importlib.resources
 
-ui_path = pkg_resources.resource_filename('issfactortools', 'dialogs/AddReferenceDialog2.ui')
+ui_path = str(importlib.resources.files('issfactortools') / 'dialogs/AddReferenceDialog2.ui')
 
 class AddReferenceDialog(*uic.loadUiType(ui_path)):
 

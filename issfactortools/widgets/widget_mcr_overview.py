@@ -3,21 +3,21 @@ import re
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-import pkg_resources
+import importlib.resources
 import traceback
 import math
 import issfactortools.widgets.QDialog
 import pymcr.constraints
 import isstools.widgets
-from PyQt5 import uic, QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QThread, QSettings, QPoint
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QCursor, QMouseEvent
-from PyQt5.QtWidgets import QMessageBox, QApplication, QWidget, QPushButton, QVBoxLayout, QMenu, QAction, QRadioButton, \
+from qtpy import uic, QtWidgets, QtGui, QtCore
+from qtpy.QtCore import QThread, QSettings, QPoint
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QCursor, QMouseEvent
+from qtpy.QtWidgets import QMessageBox, QApplication, QWidget, QPushButton, QVBoxLayout, QMenu, QAction, QRadioButton, \
     QInputDialog, QFormLayout, QLineEdit, QTableWidgetItem, QTableWidget, QHeaderView, QDialogButtonBox, QHBoxLayout, \
     QComboBox, QButtonGroup, QLabel
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, \
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas, \
     NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
@@ -25,7 +25,7 @@ from matplotlib.figure import Figure
 from issfactortools.elements.svd import plot_svd_results, doSVD
 
 
-ui_path = pkg_resources.resource_filename('issfactortools', 'ui/ui_main.ui')
+ui_path = str(importlib.resources.files('issfactortools') / 'ui/ui_main.ui')
 
 class UIDataOverview(*uic.loadUiType(ui_path)):
     def __init__(self, *args, **kwargs):
